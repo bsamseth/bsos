@@ -1,7 +1,12 @@
 [package]
-name = "limine-rust-barebones"
+name = "bsos"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 limine = "0.1.11"
+
+[[bin]]
+name = "bsos"
+test = false
+bench = false
