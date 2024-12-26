@@ -11,7 +11,7 @@ To run the kernel in QEMU (install `qemu-system` on Debian-based systems), just 
 This requires nightly Rust as of the time of writing. This is in part due to some unstable `.cargo/config.toml` options that are essential.
 
 ```toml
-// .cargo/config.toml
+# .cargo/config.toml
 [unstable]
 build-std = ["core", "compiler_builtins"]
 build-std-features = ["compiler-builtins-mem"]
