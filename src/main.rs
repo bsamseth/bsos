@@ -7,7 +7,7 @@
 
 use core::panic::PanicInfo;
 
-use bsos::println;
+use bsos::{hlt_loop, println};
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
@@ -21,15 +21,17 @@ pub extern "C" fn _start() -> ! {
     test_main();
 
     println!("It did not crash!");
-    loop {}
+    hlt_loop();
 }
 
 /// This function is called on panic.
 #[cfg(not(test))]
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
+    use bsos::hlt_loop;
+
     println!("{}", info);
-    loop {}
+    hlt_loop()
 }
 
 #[cfg(test)]

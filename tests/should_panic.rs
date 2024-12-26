@@ -7,20 +7,20 @@
 
 use core::panic::PanicInfo;
 
-use bsos::{qemu, serial_print, serial_println};
+use bsos::{hlt_loop, qemu, serial_print, serial_println};
 
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
     serial_println!("[ok]");
     qemu::exit(qemu::ExitCode::Success);
-    loop {}
+    hlt_loop();
 }
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
     test_main();
 
-    loop {}
+    hlt_loop();
 }
 
 pub fn test_runner(tests: &[&dyn Fn()]) {

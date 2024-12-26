@@ -5,7 +5,7 @@
 
 use core::panic::PanicInfo;
 
-use bsos::{qemu, serial_print, serial_println};
+use bsos::{hlt_loop, qemu, serial_print, serial_println};
 use lazy_static::lazy_static;
 use x86_64::structures::idt::{InterruptDescriptorTable, InterruptStackFrame};
 
@@ -28,7 +28,7 @@ extern "x86-interrupt" fn test_double_fault_handler(
 ) -> ! {
     serial_println!("[ok]");
     qemu::exit(qemu::ExitCode::Success);
-    loop {}
+    hlt_loop();
 }
 
 pub fn init_test_idt() {
