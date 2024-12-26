@@ -6,12 +6,14 @@
 #![reexport_test_harness_main = "test_main"]
 #![allow(clippy::empty_loop)]
 
+pub mod gdt;
 mod interrupts;
 pub mod qemu;
 pub mod serial;
 pub mod vga;
 
 pub fn init() {
+    gdt::init();
     interrupts::init_idt();
 }
 
