@@ -3,6 +3,7 @@
 #![feature(custom_test_frameworks)]
 #![test_runner(bsos::test_runner)]
 #![reexport_test_harness_main = "test_main"]
+#![allow(clippy::missing_panics_doc)]
 
 extern crate alloc;
 

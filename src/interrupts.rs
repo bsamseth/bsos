@@ -1,5 +1,4 @@
 use pic8259::ChainedPics;
-use spin;
 use x86_64::structures::idt::PageFaultErrorCode;
 use x86_64::structures::idt::{InterruptDescriptorTable, InterruptStackFrame};
 
