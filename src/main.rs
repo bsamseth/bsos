@@ -5,39 +5,31 @@
 #![reexport_test_harness_main = "test_main"]
 #![allow(clippy::empty_loop)]
 
+extern crate alloc;
+
+use alloc::boxed::Box;
 use core::panic::PanicInfo;
 
 use bootloader::{entry_point, BootInfo};
-use bsos::{hlt_loop, println};
+use bsos::{allocator, hlt_loop, memory, println};
+use x86_64::VirtAddr;
 
 entry_point!(kernel_main);
 
 fn kernel_main(boot_info: &'static BootInfo) -> ! {
-    use bsos::memory;
-    use x86_64::{structures::paging::Translate, VirtAddr};
-
     println!("Hello World{}", "!");
     bsos::init();
 
     let phys_mem_offset = VirtAddr::new(boot_info.physical_memory_offset);
-    let mapper = unsafe { memory::init(phys_mem_offset) };
+    let mut mapper = unsafe { memory::init(phys_mem_offset) };
+    let mut frame_allocator =
+        unsafe { memory::BootInfoFrameAllocator::init(&boot_info.memory_map) };
+    allocator::init_heap(&mut mapper, &mut frame_allocator).expect("heap initialization failed");
 
-    let addresses = [
-        // The identity-mapped VGA buffer page
-        0xb8000,
-        // Some code page
-        0x0020_1008,
-        // Some stack page
-        0x0100_0020_1a10,
-        // Virtual address mapped to physical address 0
-        boot_info.physical_memory_offset,
-    ];
+    let x = Box::new(41);
 
-    for &address in &addresses {
-        let virt = VirtAddr::new(address);
-        let phys = mapper.translate_addr(virt);
-        println!("{:?} -> {:?}", virt, phys);
-    }
+    println!("Heap value {x} at {x:p}");
+
     #[cfg(test)]
     test_main();
 

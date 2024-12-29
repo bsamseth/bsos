@@ -6,12 +6,15 @@
 #![reexport_test_harness_main = "test_main"]
 #![allow(clippy::empty_loop)]
 
+pub mod allocator;
 pub mod gdt;
 mod interrupts;
 pub mod memory;
 pub mod qemu;
 pub mod serial;
 pub mod vga;
+
+extern crate alloc;
 
 pub fn init() {
     gdt::init();
