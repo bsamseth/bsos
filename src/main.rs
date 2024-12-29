@@ -7,16 +7,37 @@
 
 use core::panic::PanicInfo;
 
+use bootloader::{entry_point, BootInfo};
 use bsos::{hlt_loop, println};
 
-#[no_mangle]
-pub extern "C" fn _start() -> ! {
-    println!("Hello World{}", "!");
+entry_point!(kernel_main);
 
+fn kernel_main(boot_info: &'static BootInfo) -> ! {
+    use bsos::memory;
+    use x86_64::{structures::paging::Translate, VirtAddr};
+
+    println!("Hello World{}", "!");
     bsos::init();
 
-    x86_64::instructions::interrupts::int3();
+    let phys_mem_offset = VirtAddr::new(boot_info.physical_memory_offset);
+    let mapper = unsafe { memory::init(phys_mem_offset) };
 
+    let addresses = [
+        // The identity-mapped VGA buffer page
+        0xb8000,
+        // Some code page
+        0x0020_1008,
+        // Some stack page
+        0x0100_0020_1a10,
+        // Virtual address mapped to physical address 0
+        boot_info.physical_memory_offset,
+    ];
+
+    for &address in &addresses {
+        let virt = VirtAddr::new(address);
+        let phys = mapper.translate_addr(virt);
+        println!("{:?} -> {:?}", virt, phys);
+    }
     #[cfg(test)]
     test_main();
 

@@ -8,6 +8,7 @@
 
 pub mod gdt;
 mod interrupts;
+pub mod memory;
 pub mod qemu;
 pub mod serial;
 pub mod vga;
@@ -62,10 +63,12 @@ pub fn test_panic_handler(info: &PanicInfo) -> ! {
     hlt_loop();
 }
 
+#[cfg(test)]
+bootloader::entry_point!(test_kernel_main);
+
 /// Entry point for `cargo test`
 #[cfg(test)]
-#[no_mangle]
-pub extern "C" fn _start() -> ! {
+pub fn test_kernel_main(_boot_info: &'static bootloader::BootInfo) -> ! {
     init();
     test_main();
     hlt_loop();
